@@ -2,6 +2,7 @@ package com.techelevator.tenmo.controller;
 
 import javax.validation.Valid;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -45,7 +46,7 @@ public class AuthenticationController {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = tokenProvider.createToken(authentication, false);
-        
+
         User user = userDao.findByUsername(loginDto.getUsername());
 
         return new LoginResponse(jwt, user);
@@ -71,8 +72,8 @@ public class AuthenticationController {
             this.token = token;
             this.user = user;
         }
-
-        public String getToken() {
+        @JsonProperty("token")
+        String getToken() {
             return token;
         }
 
@@ -80,13 +81,15 @@ public class AuthenticationController {
             this.token = token;
         }
 
-		public User getUser() {
-			return user;
-		}
+        @JsonProperty("user")
+        public User getUser() {
+            return user;
+        }
 
-		public void setUser(User user) {
-			this.user = user;
-		}
+        public void setUser(User user) {
+
+            this.user = user;
+        }
     }
 }
 

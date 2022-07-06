@@ -23,16 +23,16 @@ public class AccountController {
     private AccountDao accountDao;
     private UserDao userDao;
 
-    public AccountController(AccountDao accountDao){
+    public AccountController(AccountDao accountDao, UserDao userDao){
         this.accountDao = accountDao;
         this.userDao =  userDao;
 
     }
 
-    @RequestMapping(path = "currentUser", method = RequestMethod.GET)
-    public List<User> list() {
-        List<User> currentUser = userDao.findAll();
-        return currentUser;
+    @RequestMapping(path = "allusers", method = RequestMethod.GET)
+    public List<User> allusers() {
+        List<User> users = userDao.findAll();
+        return users;
     }
 
     @RequestMapping(path = "/balance/{id}", method = RequestMethod.GET)
