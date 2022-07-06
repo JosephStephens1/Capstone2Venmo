@@ -23,7 +23,7 @@ public class JdbcAccountDao implements AccountDao {
 
     @Override
     public BigDecimal getBalance(int userId) {
-        String sqlString = "SELECT balance FROM accounts WHERE user_id = ?";
+        String sqlString = "SELECT balance FROM tenmo_account WHERE user_id = ?"; // may need to concatenate later
         SqlRowSet results = null;
         BigDecimal balance = null;
 
@@ -44,7 +44,7 @@ public class JdbcAccountDao implements AccountDao {
         Account account = searchAccountById(id);
         BigDecimal updatedBalance = account.getBalance().add(amountToAdd);
         System.out.println(updatedBalance);
-        String sqlString = "UPDATE accounts " + "SET balance = ? WHERE user_id = ?";
+        String sqlString = "UPDATE tenmo_account " + "SET balance = ? WHERE user_id = ?";
         try {
             jdbcTemplate.update(sqlString, updatedBalance, id);
         } catch (DataAccessException e) {
@@ -59,7 +59,7 @@ public class JdbcAccountDao implements AccountDao {
         Account account = searchAccountById(id);
         BigDecimal updatedBalance = account.getBalance().add(amountToSubtract);
 
-        String sqlString = "UPDATE accounts " + "SET balance = ? WHERE user_id = ?";
+        String sqlString = "UPDATE tenmo_account " + "SET balance = ? WHERE user_id = ?";
         try {
             jdbcTemplate.update(sqlString, updatedBalance, id);
         } catch (DataAccessException e) {
@@ -68,11 +68,16 @@ public class JdbcAccountDao implements AccountDao {
         return account.getBalance();
     }
 
+    @Override
+    public Account findUserById(int Id) {
+        return null;
+    }
+
 
     public Account searchAccountById(int id) {
         Account account = null;
 
-        String sqlString = "SELECT * FROM accounts WHERE account_id = ?";
+        String sqlString = "SELECT * FROM tenmo_account WHERE account_id = ?";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sqlString, id);
         if (results.next()) {
             account = mapRowToAccount(results);
