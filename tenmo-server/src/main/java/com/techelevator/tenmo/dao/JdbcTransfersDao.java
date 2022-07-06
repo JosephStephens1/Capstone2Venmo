@@ -1,13 +1,21 @@
 package com.techelevator.tenmo.dao;
 
+import com.techelevator.tenmo.model.Transfers;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
-public class JdbcTransfersDao {
+public class JdbcTransfersDao implements TransfersDao {
     private JdbcTemplate jdbcTemplate;
     private AccountDao accountDao;
 
+
+    @Override
+    public List<Transfers> getAllTransfers(int userId) {
+        return null;     //needs to be implemented 
+    }
 
     public String sendTransfer(int userFrom, int userTo, BigDecimal balance) {
         if (userFrom == userTo) {
