@@ -22,7 +22,7 @@ public class JdbcTransfersDao implements TransfersDao {
             return "You can not send money to yourself, silly.";
         }
         if (balance.compareTo(accountDao.getBalance(userFrom)) > 0 && balance.compareTo(new BigDecimal(0)) > 0) {
-            String sqlString = "INSERT INTO transfers (transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
+            String sqlString = "INSERT INTO tenmo_transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
                     "VALUES ( ?, ?, ?, ?, ?)";
             jdbcTemplate.update(sqlString, 2, 2, userFrom, userTo, balance);
             return "Your Transfer has been sent";
@@ -36,7 +36,7 @@ public class JdbcTransfersDao implements TransfersDao {
             return "You can not request money from yourself.";
         }
         if (balance.compareTo(accountDao.getBalance(userFrom)) > 0 && balance.compareTo(new BigDecimal(0)) > 0) {
-            String sqlString = "INSERT INTO transfers (transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
+            String sqlString = "INSERT INTO tenmo_transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
                     "VALUES ( ?, ?, ?, ?, ?)";
             jdbcTemplate.update(sqlString, 1, 2, userFrom, userTo, balance);     //optional use case # 7 may need to change
             return "Your request has been sent";
