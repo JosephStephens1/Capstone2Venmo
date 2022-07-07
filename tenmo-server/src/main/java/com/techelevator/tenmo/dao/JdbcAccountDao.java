@@ -57,7 +57,7 @@ public class JdbcAccountDao implements AccountDao {
     @Override
     public BigDecimal subtractFromBalance(BigDecimal amountToSubtract, int id) {
         Account account = searchAccountById(id);
-        BigDecimal updatedBalance = account.getBalance().add(amountToSubtract);
+        BigDecimal updatedBalance = account.getBalance().subtract(amountToSubtract);
 
         String sqlString = "UPDATE tenmo_account " + "SET balance = ? WHERE user_id = ?";
         try {
@@ -66,11 +66,6 @@ public class JdbcAccountDao implements AccountDao {
             System.out.println("Error accessing Data");
         }
         return account.getBalance();
-    }
-
-    @Override
-    public Account findUserById(int Id) {
-        return null;
     }
 
 
