@@ -46,7 +46,7 @@ public class TransferService {
 
             System.out.println("Enter User ID you would like to send to : ");
             transfer.setAccountTo(Integer.parseInt(scanner.nextLine()));
-            transfer.setAccountFrom(Integer.parseInt(currentUser.getUser().getId()));
+            transfer.setAccountFrom(currentUser.getUser().getId().intValue());
 
 
         }catch(RestClientResponseException ex){
