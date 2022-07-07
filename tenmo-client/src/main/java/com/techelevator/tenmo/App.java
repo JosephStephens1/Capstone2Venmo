@@ -8,6 +8,7 @@ import com.techelevator.tenmo.services.ConsoleService;
 import com.techelevator.tenmo.services.TransferService;
 
 import javax.swing.plaf.ColorUIResource;
+import java.math.BigDecimal;
 
 public class App {
 
@@ -90,7 +91,8 @@ public class App {
 
 	private void viewCurrentBalance() {
         AccountService account = new AccountService(API_BASE_URL, currentUser);
-        account.fetchBalance();
+        BigDecimal balance = account.fetchBalance();
+        System.out.println("Here is your current account balance: $" + balance);
 		
 	}
 

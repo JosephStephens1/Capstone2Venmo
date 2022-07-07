@@ -31,10 +31,9 @@ public class AccountService {
         try{
             balance = restTemplate.exchange(API_BASE_URL+ "balance/" + currentUser.getUser().getId(),
             HttpMethod.GET, makeEntity(), BigDecimal.class).getBody();
-            System.out.println("Here is your current account balance: "+ balance);
 
             }catch(RestClientResponseException ex){
-            System.out.println("Sorry unable to process");
+            System.out.println("Sorry unable to process fetching the balance.");
         }return balance;
     }
     private HttpEntity<Account> makeEntity() {

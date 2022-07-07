@@ -6,6 +6,8 @@ import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class TransferService {
@@ -15,6 +17,7 @@ public class TransferService {
     private RestTemplate restTemplate = new RestTemplate();
     private AuthenticatedUser currentUser;
 
+
     public TransferService(String url, AuthenticatedUser currentUser) {
         this.currentUser = currentUser;
         API_BASE_URL = url;
@@ -22,6 +25,7 @@ public class TransferService {
     }
 
     public void SendTenmoBucks() {
+        AccountService accountService = new AccountService(API_BASE_URL, currentUser);
         User[] user = null;
         Transfer transfer = new Transfer();
         Scanner scanner;
@@ -31,9 +35,10 @@ public class TransferService {
                     HttpMethod.GET, makeEntity(), User[].class).getBody();
 
             System.out.println("Choose user: " );
-
+            List<Integer> validUsers = new ArrayList<>();
             for (User name : user)
-                if (name.getId() != currentUser.getUser().getId()) {
+                if (!(name.getId().equals(currentUser.getUser().getId()))) {
+                    validUsers.add(Integer.parseInt(name.getId().toString()));
                     System.out.println(name.getId() + name.getUsername());
 
                 }
@@ -42,15 +47,27 @@ public class TransferService {
             System.out.println("Enter User ID you would like to send to : ");
             transfer.setAccountTo(Integer.parseInt(scanner.nextLine()));
             transfer.setAccountFrom(currentUser.getUser().getId().intValue());
-            if (transfer.getAccountTo() != 0) {
+            if (validUsers.contains(transfer.getAccountTo())) {
                 System.out.println("Enter amount: ");
-                try {
-                    transfer.setAmount(new BigDecimal(Double.parseDouble(scanner.nextLine())));
-                } catch (NumberFormatException ex) {
-                    System.out.println("Error entering amount");
+                // Check to make sure they have enough money in their account. BigDecimal gets weird, but fetchBalance returns a BigDecimal
+                // so we have to use that data type. So we make a New BigDecimal
+                // using scanner.nextLine() (which is what the user enters), then compareTo fetchBalance.
+                // BigDecimal's .compareTo is a funky method which returns a -1, 0, or 1 depending on if it's less than, equal, or greater than
+                // So this whole thing checks if the input value is less than or equal to the current balance, if not, stops the transfer from even starting
+                BigDecimal transferAmount = new BigDecimal(Double.parseDouble(scanner.nextLine()));
+                if ((transferAmount.compareTo(accountService.fetchBalance()) < 1)) {
+                    try {
+                        transfer.setAmount(transferAmount);
+                    } catch (NumberFormatException ex) {
+                        System.out.println("Error entering amount");
+                    }
+                    String output = restTemplate.exchange(API_BASE_URL + "/send", HttpMethod.POST, TransferEntity(transfer), String.class).getBody();
+                    System.out.println(output);
+                } else {
+                    System.out.println("You do not have enough money to make this transfer.");
                 }
-                String output = restTemplate.exchange(API_BASE_URL + "/send", HttpMethod.POST, TransferEntity(transfer), String.class).getBody();
-                System.out.println(output);
+            } else {
+                System.out.println("That user does not exist");
             }
 
         } catch (RestClientResponseException ex) {
@@ -78,7 +95,7 @@ public class TransferService {
 
 
 
-
+return requests;
 
 
 
