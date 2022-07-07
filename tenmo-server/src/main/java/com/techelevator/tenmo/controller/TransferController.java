@@ -4,11 +4,9 @@ import com.techelevator.tenmo.dao.TransfersDao;
 import com.techelevator.tenmo.model.Transfer;
 
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 @RestController
 @PreAuthorize("isAuthenticated()")
@@ -34,5 +32,13 @@ public class TransferController {
         List<Transfer> returnedTransfers = transfersDao.getAllTransfersByUserSendMoney(id);
         return returnedTransfers;
     }
+
+    @RequestMapping(path = "/send", method = RequestMethod.POST)
+    public String sendMoney(@RequestBody Transfer transfer) {
+    String result = transfersDao.sendTransfer(transfer.getAccountFrom(), transfer.getAccountTo(), transfer.getAmount());
+        return result;
+
+    }
+
 
 }

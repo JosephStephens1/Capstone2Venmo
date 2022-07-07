@@ -5,6 +5,9 @@ import com.techelevator.tenmo.model.UserCredentials;
 import com.techelevator.tenmo.services.AccountService;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.ConsoleService;
+import com.techelevator.tenmo.services.TransferService;
+
+import javax.swing.plaf.ColorUIResource;
 
 public class App {
 
@@ -102,7 +105,8 @@ public class App {
 	}
 
 	private void sendBucks() {
-		// TODO Auto-generated method stub
+        TransferService transfer = new TransferService(API_BASE_URL, currentUser);
+        transfer.SendTenmoBucks();
 		
 	}
 

@@ -1,12 +1,10 @@
 package com.techelevator.tenmo.services;
 
-import com.techelevator.tenmo.model.Account;
-import com.techelevator.tenmo.model.AuthenticatedUser;
-import com.techelevator.tenmo.model.Transfer;
-import com.techelevator.tenmo.model.User;
+import com.techelevator.tenmo.model.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
@@ -35,7 +33,7 @@ public class TransferService {
             user = restTemplate.exchange(API_BASE_URL + "userlist/",
                     HttpMethod.GET, makeEntity(), User[].class).getBody();
 
-            System.out.println("Choose user: " + user);
+            System.out.println("Choose user: " );
 
             for (User name : user)
                 if (name.getId() != currentUser.getUser().getId()) {
@@ -47,22 +45,40 @@ public class TransferService {
             System.out.println("Enter User ID you would like to send to : ");
             transfer.setAccountTo(Integer.parseInt(scanner.nextLine()));
             transfer.setAccountFrom(currentUser.getUser().getId().intValue());
+            if (transfer.getAccountTo() != 0) {
+                System.out.println("Enter amount: ");
+                try {
+                    transfer.setAmount(new BigDecimal(Double.parseDouble(scanner.nextLine())));
+                } catch (NumberFormatException ex) {
+                    System.out.println("Error entering amount");
+                }
+                String output = restTemplate.exchange(API_BASE_URL + "/send", HttpMethod.POST, TransferEntity(transfer), String.class).getBody();
+                System.out.println(output);
+            }
 
-
-        }catch(RestClientResponseException ex){
+        } catch (RestClientResponseException ex) {
             System.out.println("Sorry unable to process");
         }
     }
-            private HttpEntity<Transfer> makeEntity () {
-                HttpHeaders headers = new HttpHeaders();
-                headers.setBearerAuth(currentUser.getToken());
-                HttpEntity entity = new HttpEntity<>(headers);
-                return entity;
 
-            }
+    private HttpEntity<Transfer> TransferEntity(Transfer transfer) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(currentUser.getToken());
+        HttpEntity<Transfer> entity = new HttpEntity<>(transfer, headers);
+        return entity;
+    }
 
 
+    private HttpEntity makeEntity() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(currentUser.getToken());
+        HttpEntity entity = new HttpEntity<>(headers);
+        return entity;
 
-        }
+    }
+
+
+}
 
 
