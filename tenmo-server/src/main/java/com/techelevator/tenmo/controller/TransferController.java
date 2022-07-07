@@ -18,16 +18,19 @@ public class TransferController {
 
     private TransfersDao transfersDao;
 
+ public TransferController(TransfersDao transferDao) {
+     this.transfersDao = transferDao;
+ }
 
 
     @RequestMapping(path = "/account/transfersreceived/{id}", method = RequestMethod.GET)
-    public List<Transfer> getTransfersReceived(@PathVariable int id) {  //use a token
+    public List<Transfer> getTransfersReceived(@PathVariable int id) {
         List<Transfer> returnedTransfers = transfersDao.getAllTransfersByUserReceiveMoney(id);
         return returnedTransfers;
     }
 
     @RequestMapping(path = "/account/transferssent/{id}", method = RequestMethod.GET)
-    public List<Transfer> getTransfersSent(@PathVariable int id) {  //use a token
+    public List<Transfer> getTransfersSent(@PathVariable int id) {
         List<Transfer> returnedTransfers = transfersDao.getAllTransfersByUserSendMoney(id);
         return returnedTransfers;
     }

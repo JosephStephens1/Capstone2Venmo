@@ -4,14 +4,21 @@ import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Transfer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class JdbcTransfersDao implements TransfersDao {
+
     private JdbcTemplate jdbcTemplate;
     private AccountDao accountDao;
+
+    public JdbcTransfersDao(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
 
     @Override
@@ -22,11 +29,11 @@ public class JdbcTransfersDao implements TransfersDao {
                            "FROM tenmo_transfer " +
                            "JOIN tenmo_account ON " +
                            "tenmo_transfer.account_from = tenmo_account.account_id " +
-                           "WHERE tenmo_account.account_id = ?";
+                           "WHERE tenmo_account.user_id = ?";
 
         SqlRowSet results = jdbcTemplate.queryForRowSet(sqlString, userId);
 
-        if (results.next()){
+        while (results.next()){
             Transfer transfer = mapRowToTransfer(results);
             transferList.add(transfer);
         }
@@ -42,15 +49,17 @@ public class JdbcTransfersDao implements TransfersDao {
                 "FROM tenmo_transfer " +
                 "JOIN tenmo_account ON " +
                 "tenmo_transfer.account_to = tenmo_account.account_id " +
-                "WHERE tenmo_account.account_id = ?";
+                "WHERE tenmo_account.user_id = ?";
 
         SqlRowSet results = jdbcTemplate.queryForRowSet(sqlString, userId);
 
-        if (results.next()){
+        while (results.next()){
             Transfer transfer = mapRowToTransfer(results);
             transferList.add(transfer);
         }
+
         return transferList;
+
     }
     public String sendTransfer(int userFrom, int userTo, BigDecimal transferAmount) {
         if (userFrom == userTo) {

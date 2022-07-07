@@ -5,12 +5,13 @@ import com.techelevator.tenmo.model.AuthenticatedUser;
 import com.techelevator.util.BasicLogger;
 import org.apiguardian.api.API;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
-import java.net.http.HttpHeaders;
+
 
 public class AccountService {
 
@@ -25,10 +26,10 @@ public class AccountService {
 
     }
 
-    public BigDecimal getBalance(){
+    public BigDecimal fetchBalance(){
       BigDecimal balance = new BigDecimal(0);
         try{
-            balance = restTemplate.exchange(API_BASE_URL+ "Balance/" + currentUser.getUser().getId(),
+            balance = restTemplate.exchange(API_BASE_URL+ "balance/" + currentUser.getUser().getId(),
             HttpMethod.GET, makeEntity(), BigDecimal.class).getBody();
             System.out.println("Here is your current account balance: "+ balance);
 
@@ -36,7 +37,7 @@ public class AccountService {
             System.out.println("Sorry unable to process");
         }return balance;
     }
-    private HttpEntity<Account> makeEntity(Account account) {
+    private HttpEntity<Account> makeEntity() {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(currentUser.getToken());
         HttpEntity entity = new HttpEntity<>(headers);
