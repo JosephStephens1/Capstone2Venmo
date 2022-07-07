@@ -1,10 +1,7 @@
 package com.techelevator.tenmo.services;
 
 import com.techelevator.tenmo.model.*;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
@@ -60,6 +57,34 @@ public class TransferService {
             System.out.println("Sorry unable to process");
         }
     }
+
+    public Transfer[] transferList() {
+
+        Transfer[] requests = null;
+
+        try {
+            ResponseEntity<Transfer[]> response = restTemplate.exchange(API_BASE_URL, HttpMethod.GET, makeEntity(), Transfer[].class);
+            requests = response.getBody();
+        } catch (RestClientResponseException ex){
+
+
+        return requests;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
 
     private HttpEntity<Transfer> TransferEntity(Transfer transfer) {
         HttpHeaders headers = new HttpHeaders();
