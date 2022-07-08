@@ -31,13 +31,13 @@ public class AccountController {
 
     }
 
-    @RequestMapping(path = "/account/getId/{id}", method = RequestMethod.GET)
+    @RequestMapping(path = "/account/getid/{id}", method = RequestMethod.GET)
     public Account getAccountUsingUserId(@PathVariable int id) {
         Account account = accountDao.searchAccountByUserId(id);
         return account;
     }
 
-    @RequestMapping(path = "/account/getUserName/Id{id}", method = RequestMethod.GET)
+    @RequestMapping(path = "/account/getusername/{id}", method = RequestMethod.GET)
     public  String getUserNameByAccountId(@PathVariable int id){
         String username = userDao.fetchUserNameByAccountId(id);
         return username;

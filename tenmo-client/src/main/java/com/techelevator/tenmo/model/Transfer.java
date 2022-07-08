@@ -28,6 +28,10 @@ public class Transfer {
     }
 
     public String getTransferStatus() {
+
+        if (this.transferStatusId == 2) {
+            return "Appproved";
+        }
         return transferStatus;
     }
 
@@ -35,7 +39,11 @@ public class Transfer {
         this.transferStatus = transferStatus;
     }
 
+
     public String getTransferType() {
+        if (this.transferTypeId == 2) {
+            return "Sent";
+        }
         return transferType;
     }
 
@@ -94,8 +102,6 @@ public class Transfer {
     public void setUserFrom(String userFrom) {
         this.userFrom = userFrom;
     }
-
-
 
 
 }

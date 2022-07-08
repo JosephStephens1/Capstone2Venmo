@@ -2,6 +2,7 @@ package com.techelevator.tenmo.services;
 
 import com.techelevator.tenmo.model.*;
 import org.springframework.http.*;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
@@ -79,7 +80,9 @@ public class TransferService {
 
         Account currentAccount = restTemplate.exchange(API_BASE_URL + "account/getid/" + currentUser.getUser().getId(), HttpMethod.GET, makeEntity(), Account.class).getBody();
         Transfer[] transfers = null;
+        Scanner scanner;
         try {
+            scanner = new Scanner(System.in);
             transfers = restTemplate.exchange(API_BASE_URL + "account/transfers/" + currentUser.getUser().getId(), HttpMethod.GET, makeEntity(), Transfer[].class).getBody();
             System.out.println("-------------------------------------------\n" +
                     "Transfers\n" +
@@ -97,10 +100,37 @@ public class TransferService {
                 }
                 System.out.println(transfer.getTransferId() + "        " + direction + username + "      $" + transfer.getAmount());
             }
+            System.out.println("Please enter transfer ID to view details (0 to cancel): ");
+            int idToView = Integer.parseInt(scanner.nextLine());
+            if(idToView != 0) {        // as long as they don't pick zero
+               ShowTransferById(idToView);
+            }
         } catch (RestClientResponseException ex) {
             System.out.println("Sorry, unable to process.");
         }
     }
+
+    public void ShowTransferById(int transferId) {
+
+        Transfer transfer = null;
+        try {
+            transfer = restTemplate.exchange(API_BASE_URL+ "account/transferbyid/" + transferId, HttpMethod.GET, makeEntity(),Transfer.class).getBody();
+            String usernameTo = restTemplate.exchange(API_BASE_URL + "account/getusername/" + transfer.getAccountTo(), HttpMethod.GET, makeEntity(), String.class).getBody();
+            String usernameFrom = restTemplate.exchange(API_BASE_URL + "account/getusername/" + transfer.getAccountFrom(), HttpMethod.GET, makeEntity(), String.class).getBody();
+            System.out.println("--------------------------------------------\n" +
+                    "Transfer Details\n" +
+                    "--------------------------------------------");
+            System.out.println("ID: " + transfer.getTransferId());
+            System.out.println("From: " +   usernameFrom);
+            System.out.println("To: " + usernameTo);
+            System.out.println("Type: " + transfer.getTransferType());
+            System.out.println("Status: " + transfer.getTransferStatus());
+            System.out.println("Amount: $" + transfer.getAmount());
+        } catch (RestClientResponseException ex) {
+            System.out.println("Sorry, unable to process.");
+        }
+    }
+
 
 
     private HttpEntity<Transfer> TransferEntity(Transfer transfer) {

@@ -61,6 +61,22 @@ public class JdbcTransfersDao implements TransfersDao {
         return transferList;
 
     }
+    @Override
+    public Transfer getTransferByTransferID (int transferID) {
+        Transfer transferReturned = null;
+
+        String sqlString = "SELECT transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount " +
+                "FROM tenmo_transfer " +
+                "WHERE transfer_id = ?";
+
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sqlString, transferID);
+
+        if (results.next()) {
+            transferReturned = mapRowToTransfer(results);
+        }
+
+        return transferReturned;
+    }
 
     public String sendTransfer(int userFrom, int userTo, BigDecimal transferAmount) {
         if (userFrom == userTo) {

@@ -48,6 +48,9 @@ public class Transfer {
     }
 
     public String getTransferType() {
+        if(this.transferTypeId == 2) {
+            return "Sent";
+        }
         return transferType;
     }
 

@@ -11,6 +11,6 @@ public interface TransfersDao {
     public List<Transfer> getAllTransfersByUserSendMoney(int userId);
     public String sendTransfer(int userFrom, int userTo, BigDecimal amount);
     public String requestTransfer(int userFrom, int userTo, BigDecimal amount);
-
+    public Transfer getTransferByTransferID(int transferId);
 
 }
