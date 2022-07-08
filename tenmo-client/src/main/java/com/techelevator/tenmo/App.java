@@ -97,7 +97,8 @@ public class App {
 	}
 
 	private void viewTransferHistory() {
-		// TODO Auto-generated method stub
+		TransferService transfer = new TransferService(API_BASE_URL, currentUser);
+        transfer.ShowAllTransfers();
 		
 	}
 

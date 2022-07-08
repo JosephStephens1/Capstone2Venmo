@@ -34,7 +34,7 @@ public class TransferService {
             user = restTemplate.exchange(API_BASE_URL + "userlist/",
                     HttpMethod.GET, makeEntity(), User[].class).getBody();
 
-            System.out.println("Choose user: " );
+            System.out.println("Choose user: ");
             List<Integer> validUsers = new ArrayList<>();
             for (User name : user)
                 if (!(name.getId().equals(currentUser.getUser().getId()))) {
@@ -75,31 +75,31 @@ public class TransferService {
         }
     }
 
-    public Transfer[] transferList() {
+    public void ShowAllTransfers() {
 
-        Transfer[] requests = null;
-
+        Account currentAccount = restTemplate.exchange(API_BASE_URL + "account/getid/" + currentUser.getUser().getId(), HttpMethod.GET, makeEntity(), Account.class).getBody();
+        Transfer[] transfers = null;
         try {
-            ResponseEntity<Transfer[]> response = restTemplate.exchange(API_BASE_URL, HttpMethod.GET, makeEntity(), Transfer[].class);
-            requests = response.getBody();
-        } catch (RestClientResponseException ex){
-
-
-        return requests;
-    }
-
-
-
-
-
-
-
-
-return requests;
-
-
-
-
+            transfers = restTemplate.exchange(API_BASE_URL + "account/transfers/" + currentUser.getUser().getId(), HttpMethod.GET, makeEntity(), Transfer[].class).getBody();
+            System.out.println("-------------------------------------------\n" +
+                    "Transfers\n" +
+                    "ID          From/To                 Amount\n" +
+                    "-------------------------------------------");
+            String direction = "";
+            for (Transfer transfer : transfers) {
+                String username = "";
+                if (currentAccount.getAccountId() == transfer.getAccountFrom()) {
+                    direction = " To: ";
+                    username = restTemplate.exchange(API_BASE_URL + "account/getusername/" + transfer.getAccountTo(), HttpMethod.GET, makeEntity(), String.class).getBody();
+                } else {
+                    direction = " From: ";
+                    username = restTemplate.exchange(API_BASE_URL + "account/getusername/" + transfer.getAccountFrom(), HttpMethod.GET, makeEntity(), String.class).getBody();
+                }
+                System.out.println(transfer.getTransferId() + "        " + direction + username + "      $" + transfer.getAmount());
+            }
+        } catch (RestClientResponseException ex) {
+            System.out.println("Sorry, unable to process.");
+        }
     }
 
 
