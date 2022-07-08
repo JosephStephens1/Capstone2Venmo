@@ -76,6 +76,18 @@ public class JdbcUserDao implements UserDao {
     }
 
     @Override
+    public String fetchUserNameByAccountId(int id){
+        String sql = "SELECT username " +
+                "FROM tenmo_user " +
+                "JOIN tenmo_account " +
+                "ON tenmo_user.user_id = tenmo_account.user_id " +
+                "WHERE account_id = ?";
+        String username = jdbcTemplate.queryForObject(sql, String.class, id);
+        return username;
+
+    }
+
+    @Override
     public boolean create(String username, String password) {
 
         // create user

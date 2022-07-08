@@ -2,6 +2,7 @@ package com.techelevator.tenmo.controller;
 
 import com.techelevator.tenmo.dao.AccountDao;
 import com.techelevator.tenmo.dao.UserDao;
+import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.security.jwt.TokenProvider;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.nio.file.Path;
 import java.util.List;
 
 @RestController
@@ -27,6 +29,18 @@ public class AccountController {
         this.accountDao = accountDao;
         this.userDao =  userDao;
 
+    }
+
+    @RequestMapping(path = "/account/getId/{id}", method = RequestMethod.GET)
+    public Account getAccountUsingUserId(@PathVariable int id) {
+        Account account = accountDao.searchAccountByUserId(id);
+        return account;
+    }
+
+    @RequestMapping(path = "/account/getUserName/Id{id}", method = RequestMethod.GET)
+    public  String getUserNameByAccountId(@PathVariable int id){
+        String username = userDao.fetchUserNameByAccountId(id);
+        return username;
     }
 
     @RequestMapping(path = "userlist", method = RequestMethod.GET)

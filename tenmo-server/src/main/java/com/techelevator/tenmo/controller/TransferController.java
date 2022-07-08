@@ -21,6 +21,13 @@ public class TransferController {
  }
 
 
+    @RequestMapping(path= "/account/transfers/{id}", method =  RequestMethod.GET)
+    public List<Transfer> getAllTransfers(@PathVariable int id){
+     List<Transfer> returnedTransfers = transfersDao.getAllTransfersByUserReceiveMoney(id);
+     returnedTransfers.addAll(transfersDao.getAllTransfersByUserSendMoney(id);
+     return  returnedTransfers;
+    }
+
     @RequestMapping(path = "/account/transfersreceived/{id}", method = RequestMethod.GET)
     public List<Transfer> getTransfersReceived(@PathVariable int id) {
         List<Transfer> returnedTransfers = transfersDao.getAllTransfersByUserReceiveMoney(id);
