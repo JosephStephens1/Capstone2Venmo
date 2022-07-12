@@ -76,8 +76,8 @@ public class JdbcUserDao implements UserDao {
     }
 
     @Override
-    public String fetchUserNameByAccountId(int id){
-        String sql = "SELECT username " +
+    public String fetchUserNameByAccountId(int id){                 //for when we need a Username, but only have an accountId. Mostly used for showing the username
+        String sql = "SELECT username " +                           //when showing all transfers (since we have an accountId on the Transfer object, but not a userId)
                 "FROM tenmo_user " +
                 "JOIN tenmo_account " +
                 "ON tenmo_user.user_id = tenmo_account.user_id " +

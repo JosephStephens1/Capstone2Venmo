@@ -10,12 +10,14 @@ public class Transfer {
     private int accountFrom;
     private int accountTo;
     private BigDecimal amount;
-    private String transferType;
+    private String transferType;                            //these four strings we don't necessarily use yet,
+                                                            //but would be helpful for setting up Request functionality in the future
+                                                            //set up while we were in here just to try and cover all eventual uses
     private String transferStatus;
     private String userFrom;
     private String userTo;
 
-    public Transfer(){ };
+    public Transfer(){ }
 
     public Transfer(int transferId, int transferTypeId, int transferStatusId, int accountFrom, int accountTo,
                     BigDecimal amount) {
@@ -47,8 +49,8 @@ public class Transfer {
         this.transferStatus = transferStatus;
     }
 
-    public String getTransferType() {
-        if(this.transferTypeId == 2) {
+    public String getTransferType() {                //this getter returns a string based on the id code, because transferType is stored in the database as an integer code
+        if(this.transferTypeId == 2) {              //since we do not have requests (yet) this only needs an if for an id of 2 (checking the tables, 2 = "Sent")
             return "Sent";
         }
         return transferType;

@@ -7,10 +7,10 @@ import java.util.List;
 
 public interface TransfersDao {
 
-    public List<Transfer> getAllTransfersByUserReceiveMoney(int userId);
-    public List<Transfer> getAllTransfersByUserSendMoney(int userId);
-    public String sendTransfer(int userFrom, int userTo, BigDecimal amount);
-    public String requestTransfer(int userFrom, int userTo, BigDecimal amount);
-    public Transfer getTransferByTransferID(int transferId);
+    List<Transfer> getAllTransfersByUserReceiveMoney(int userId);
+    List<Transfer> getAllTransfersByUserSendMoney(int userId);
+    String sendTransfer(int userFrom, int userTo, BigDecimal amount);
+    String requestTransfer(int userFrom, int userTo, BigDecimal amount);
+    Transfer getTransferByTransferID(int transferId);
 
 }

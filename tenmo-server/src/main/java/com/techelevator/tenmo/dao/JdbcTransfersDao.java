@@ -13,7 +13,7 @@ import java.util.List;
 @Component
 public class JdbcTransfersDao implements TransfersDao {
 
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
     private AccountDao accountDao;
 
     public JdbcTransfersDao(JdbcTemplate jdbcTemplate) {
@@ -29,11 +29,11 @@ public class JdbcTransfersDao implements TransfersDao {
                 "FROM tenmo_transfer " +
                 "JOIN tenmo_account ON " +
                 "tenmo_transfer.account_from = tenmo_account.account_id " +
-                "WHERE tenmo_account.user_id = ?";
+                "WHERE tenmo_account.user_id = ?";                                  //the JOIN is necessary to grab the user_id, as that value isn't in transfer table
 
         SqlRowSet results = jdbcTemplate.queryForRowSet(sqlString, userId);
 
-        while (results.next()) {
+        while (results.next()) {                                    //use a while loop here because it's possible that there's 0 Transfers, 1 Transfer, or 5000 Transfers
             Transfer transfer = mapRowToTransfer(results);
             transferList.add(transfer);
         }
@@ -49,11 +49,11 @@ public class JdbcTransfersDao implements TransfersDao {
                 "FROM tenmo_transfer " +
                 "JOIN tenmo_account ON " +
                 "tenmo_transfer.account_to = tenmo_account.account_id " +
-                "WHERE tenmo_account.user_id = ?";
+                "WHERE tenmo_account.user_id = ?";                                  //the JOIN is necessary to grab the user_id, as that value isn't in transfer table
 
         SqlRowSet results = jdbcTemplate.queryForRowSet(sqlString, userId);
 
-        while (results.next()) {
+        while (results.next()) {                                      //use a while loop here because it's possible that there's 0 Transfers, 1 Transfer, or 5000 Transfers
             Transfer transfer = mapRowToTransfer(results);
             transferList.add(transfer);
         }
@@ -62,8 +62,8 @@ public class JdbcTransfersDao implements TransfersDao {
 
     }
     @Override
-    public Transfer getTransferByTransferID (int transferID) {
-        Transfer transferReturned = null;
+    public Transfer getTransferByTransferID (int transferID) {     //SQL to return all the pieces of a Transfer based on the transfer_id, which we then map into a Transfer object
+        Transfer transferReturned = null;                          //in order to manipulate it further down the line
 
         String sqlString = "SELECT transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount " +
                 "FROM tenmo_transfer " +
@@ -78,16 +78,19 @@ public class JdbcTransfersDao implements TransfersDao {
         return transferReturned;
     }
 
-    public String sendTransfer(int userFrom, int userTo, BigDecimal transferAmount) {
-        if (userFrom == userTo) {
-            return "You can not send money to yourself, silly.";
+    public String sendTransfer(int userFrom, int userTo, BigDecimal transferAmount) {  //we decided to make this have a return type of String because we wanted to be able to return
+                                                                                       //messages to the console log. Realised this could be done with PrintLn, but we also don't ever
+        if (userFrom == userTo) {                                                      //actually need to deal with a Transfer object, we are just creating the data in the table.
+                                                                                       //it gets turned into a Transfer object using SQL commands later in the program as we need Transfer objects (for example, "transfersDao.getTransferByTransferID(id)")
+                                                                                       //we never actually need a Transfer object until we're dealing with transfers on the client side
+            return "You cannot send money to yourself, silly.";  //probably should have been a PrintLn
         }
-        //First, we need to grab the ACCOUNT IDs instead of the USER IDs
+        //First, we need to grab the ACCOUNT IDs instead of the USER IDs, we will need these for logging the transfer in transfers table as that table uses account IDs, not user IDs
         String sqlStringAccountFromGet = "SELECT account_id " +
                 "FROM tenmo_account " +
                 "WHERE user_id = ?";
-        int accountFrom = jdbcTemplate.queryForObject(sqlStringAccountFromGet, int.class, userFrom);
-        String sqlStringAccountToGet = "SELECT account_id " +
+        int accountFrom = jdbcTemplate.queryForObject(sqlStringAccountFromGet, int.class, userFrom);  //may cause a nullException IF the SQL returns nothing or a non-integer value
+        String sqlStringAccountToGet = "SELECT account_id " +                                         //should not even be an issue in this environment for this situation
                 "FROM tenmo_account " +
                 "WHERE user_id = ?";
         int accountTo = jdbcTemplate.queryForObject(sqlStringAccountToGet, int.class, userTo);
@@ -105,7 +108,7 @@ public class JdbcTransfersDao implements TransfersDao {
         BigDecimal startingBalanceTo = jdbcTemplate.queryForObject(sqlStringStartingBalanceTo, BigDecimal.class, accountTo);
         BigDecimal newBalanceFrom = startingBalanceFrom.subtract(transferAmount);
         BigDecimal newBalanceTo = startingBalanceTo.add(transferAmount);             //determine what the balances will be updated to
-        //for the respective accounts
+                                                                                     //for the respective accounts
 
         String sqlStringUpdateBalance = "UPDATE tenmo_account " +
                 "SET balance = ? " +
@@ -117,14 +120,12 @@ public class JdbcTransfersDao implements TransfersDao {
         //Finally, we'll log this as a new transfer into the tenmo_transfer database:
         String sqlString = "INSERT INTO tenmo_transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
                 "VALUES ( ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sqlString, 2, 2, accountFrom, accountTo, transferAmount);
+        jdbcTemplate.update(sqlString, 2, 2, accountFrom, accountTo, transferAmount); //we wanted account_from and account_to here since transfers table uses account Ids
         return "Your Transfer has been sent";
-
-        // return "Not enough monies, not a real person, bye";    //change later
 
     }
 
-    public String requestTransfer(int userFrom, int userTo, BigDecimal transferAmount) {
+    public String requestTransfer(int userFrom, int userTo, BigDecimal transferAmount) {     //not fully implemented for a request, but the framework was started. currently unused
         if (userFrom == userTo) {
             return "You can not request money from yourself.";
         }
@@ -138,7 +139,7 @@ public class JdbcTransfersDao implements TransfersDao {
         }
     }
 
-    private Transfer mapRowToTransfer(SqlRowSet result) {
+    private Transfer mapRowToTransfer(SqlRowSet result) {                //take info we got from the SQL and create a Transfer object
         Transfer transfer = new Transfer();
         transfer.setTransferId(result.getInt("transfer_id"));
         transfer.setTransferTypeId(result.getInt("transfer_type_id"));
