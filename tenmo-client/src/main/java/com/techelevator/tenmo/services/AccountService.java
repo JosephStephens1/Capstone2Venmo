@@ -26,9 +26,9 @@ public class AccountService {
 
     }
 
-    public BigDecimal fetchBalance(){
-      BigDecimal balance = new BigDecimal(0);
-        try{
+    public BigDecimal fetchBalance(){                          //essential just implements getBalance on the server's TransferController
+      BigDecimal balance = new BigDecimal(0);              //in order to return us a BigDecimal balance of the currentUser
+        try{                                                   //we use this in a few places but specifically for when the user selects "Show balance"
             balance = restTemplate.exchange(API_BASE_URL+ "balance/" + currentUser.getUser().getId(),
             HttpMethod.GET, makeEntity(), BigDecimal.class).getBody();
 

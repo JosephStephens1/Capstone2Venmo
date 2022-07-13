@@ -27,10 +27,10 @@ public class Transfer {
         this.userTo = userTo;
     }
 
-    public String getTransferStatus() {
-
+    public String getTransferStatus() {      //this getter returns a string based on the id code, because transferStatus is stored in the database as an integer code
+                                             //since we do not have requests (yet) this only needs an if for an id of 2 (checking the tables, 2 = "Approved")
         if (this.transferStatusId == 2) {
-            return "Appproved";
+            return "Approved";
         }
         return transferStatus;
     }
@@ -41,8 +41,8 @@ public class Transfer {
 
 
     public String getTransferType() {
-        if (this.transferTypeId == 2) {
-            return "Sent";
+        if (this.transferTypeId == 2) {          //this getter returns a string based on the id code, because transferType is stored in the database as an integer code
+            return "Sent";                       //since we do not have requests (yet) this only needs an if for an id of 2 (checking the tables, 2 = "Sent")
         }
         return transferType;
     }
